@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>showImages</title>
+    <style type="text/css">
+        .float{
+            float:left;
+            width : 200px;
+            height: 200px;
+            overflow: hidden;
+            border: 1px solid #CCCCCC;
+            border-radius: 10px;
+            padding: 5px;
+            margin: 5px;
+        }
+        img{
+            position: relative;
+        }
+        .result{
+            width: 200px;
+            height: 200px;
+            text-align: center;
+            box-sizing: border-box;
+        }
+        .file_input{
+            display: none;
+        }
+        .view{
+            width: 200px;
+            height:200px;
+            position: absolute;
+            text-align: center;
+            line-height: 200px;
+            z-index: 10;
+            font-size: 30px;
+            background-color: rgba(255,255,255,0.8);
+            color: #777;
+            opacity: 0;
+            transition-duration: 0.7s;
+            -webkit-transition-duration: 0.7s;
+        }
+        .view:hover{
+            cursor: pointer;
+            opacity: 1;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <a th:href="${#httpServletRequest.getScheme() + '://' + #httpServletRequest.getServerName() + ':' + #request.getServerPort()  + #request.getContextPath() + '/'} "
+       id="contextPath"></a>
+    <p>Session value: <span th:text="${session}">No Value</span></p>
+    <label>请选择一个图像文件：</label>
+    <button class="select" type="button">(重新)选择图片</button>
+    <!--<button id="add" type="button">(追加)图片</button>-->
+    <input type="file" class="file_input" name="myFile1" multiple/> <!--用input标签并选择type=file，记得带上multiple，不然就只能单选图片了-->
+
+
+    <label>请选择一个图像文件：</label>
+    <button class="select" type="button">(重新)选择图片</button>
+    <!--<button id="add" type="button">(追加)图片</button>-->
+    <input type="file" class="file_input" name="myFile2" multiple/>
+
+
+    <button id="submit" type="submit">提交</button>
+<hr>
+    <img width="200px" id="toShow" src="" alt="">
+</div>
+<div id="outerdiv" style="position:fixed;top:0;left:0;background:rgba(0,0,0,0.7);z-index:999;width:100%;height:100%;display:none;">
+    <div id="innerdiv" style="position:absolute;">
+        <img id="bigimg" style="border:5px solid #fff;" src="" />
+    </div>
+</div>
+<script src="http://libs.baidu.com/jquery/2.0.0/jquery.min.js"></script>
+<script type="text/javascript">
+    var contextPath;
+    window.onload = function(){
+        contextPath = $('#contextPath').attr('href');
+//        var input = document.getElementById("file_input");
+        var result;
+        var dataArr = []; // 储存所选图片的结果(文件名和base64数据)
+        var fd;  //FormData方式发送请求
+//        var oSelect = document.getElementById("select");
+        var $oSelect = $('.select');
+//        var oAdd = document.getElementById("add");
+        var oSubmit = document.getElementById("submit");
+        var $oSubmit = $('#submit');
+//        var oInput = document.getElementById("file_input");
+        var $oInput = $('.file_input');
+        var $input = $('.file_input');
+
+        $input.each(function () {
+            if(typeof FileReader==='undefined'){
+                alert("抱歉，你的浏览器不支持 FileReader");
+                $(this).attr('disabled', 'disabled');
+//                input.setAttribute('disabled','disabled');
+            }else{
+                $(this).on('change', readFile);
+//                input.addEventListener('change',readFile,false);
+            }
+        })
+//        if(typeof FileReader==='undefined'){
+//            alert("抱歉，你的浏览器不支持 FileReader");
+//            input.setAttribute('disabled','disabled');
+//        }else{
+//            input.addEventListener('change',readFile,false);
+//        }
+
+        function readFile(event){
+            fd = new FormData();
+            var iLen = this.files.length;
+            var index = 0;
+            for(var i=0;i<iLen;i++){
+                if (!$(this).val().match(/.jpg|.gif|.png|.jpeg|.bmp/i)){　　//判断上传文件格式
+                    return alert("上传的图片格式不正确，请重新选择");
+                }
+                var reader = new FileReader();
+                reader.index = i;
+                fd.append(i,this.files[i]);
+                reader.readAsDataURL(this.files[i]);  //转成base64
+                reader.fileName = this.files[i].name;
+
+
+                reader.onload = function(e){
+                    var imgMsg = {
+                        field: event.target.name,
+                        name : this.fileName,//获取文件名
+                        base64 : this.result   //reader.readAsDataURL方法执行完后，base64数据储存在reader.result里
+                    }
+                    dataArr.push(imgMsg);
+                    result = '<div class="view">点击预览</div><div class="result"><img src="'+this.result+'" alt=""/></div>';
+                    var div = document.createElement('div');
+                    div.innerHTML = result;
+                    div['className'] = 'float';
+                    div['index'] = index;
+                    document.getElementsByTagName('body')[0].appendChild(div);  　　//插入dom树
+                    var img = div.getElementsByTagName('img')[0];
+                    img.onload = function(){
+                        var nowHeight = ReSizePic(this); //设置图片大小
+                        this.parentNode.style.display = 'block';
+                        var oParent = this.parentNode;
+                        if(nowHeight){
+                            oParent.style.paddingTop = (oParent.offsetHeight - nowHeight)/2 + 'px';
+                        }
+                    }
+
+                    div.onclick = function(){
+                        imgShow($(this).find('img'))
+//                            this.remove();                  // 在页面中删除该图片元素
+//                            delete dataArr[this.index];  // 删除dataArr对应的数据
+                    }
+                    index++;
+                }
+            }
+        }
+
+        function send(){
+            var submitArr = [];
+            for (var i = 0; i < dataArr.length; i++) {
+                if (dataArr[i]) {
+                    submitArr.push(dataArr[i]);
+                }
+            }
+            // console.log('提交的数据：'+JSON.stringify(submitArr))
+            $.ajax({
+                url : contextPath + 'img/submit',
+                type : 'post',
+                data : JSON.stringify(submitArr),
+                dataType: 'json',
+                contentType: "application/json; charset=utf-8",
+                //processData: false,   用FormData传fd时需有这两项
+                //contentType: false,
+                success : function(data){
+                    $('#toShow').attr('src', data.path)
+                    console.log(data.path)
+//                    console.log('返回的数据：'+JSON.stringify(data))
+                },
+                error: function () {
+                    console.log("发生错误")
+                }
+
+            })
+        }
+
+        $oSelect.on('click', function () {
+            var $sib = $(this).next('input[type=file]');
+//            $oInput.val('')
+            $sib.val('');
+//            oInput.value = "";   // 先将oInput值清空，否则选择图片与上次相同时change事件不会触发
+            //清空已选图片
+//            $('.float').remove();
+//            dataArr = [];
+            index = 0;
+            $sib.click();
+//            $oInput.click();
+        })
+//        oSelect.onclick=function(){
+//            $oInput.val('')
+////            oInput.value = "";   // 先将oInput值清空，否则选择图片与上次相同时change事件不会触发
+//            //清空已选图片
+//            $('.float').remove();
+//            dataArr = [];
+//            index = 0;
+//            $oInput.click();
+//        }
+//        oAdd.onclick=function(){
+//            oInput.value = "";   // 先将oInput值清空，否则选择图片与上次相同时change事件不会触发
+//            oInput.click();
+//        }
+        $oSubmit.on('click', function () {
+            if(!dataArr.length){
+                return alert('请先选择文件');
+            }
+            send();
+        })
+//        oSubmit.onclick=function(){
+//            if(!dataArr.length){
+//                return alert('请先选择文件');
+//            }
+//            send();
+//        }
+    }
+    /*
+     用ajax发送fd参数时要告诉jQuery不要去处理发送的数据，
+     不要去设置Content-Type请求头才可以发送成功，否则会报“Illegal invocation”的错误，
+     也就是非法调用，所以要加上“processData: false,contentType: false,”
+     * */
+    function ReSizePic(ThisPic) {
+        var RePicWidth = 200; //这里修改为您想显示的宽度值
+
+        var TrueWidth = ThisPic.width; //图片实际宽度
+        var TrueHeight = ThisPic.height; //图片实际高度
+
+        if(TrueWidth>TrueHeight){
+            //宽大于高
+            var reWidth = RePicWidth;
+            ThisPic.width = reWidth;
+            //垂直居中
+            var nowHeight = TrueHeight * (reWidth/TrueWidth);
+            return nowHeight;  //将图片修改后的高度返回，供垂直居中用
+        }else{
+            //宽小于高
+            var reHeight = RePicWidth;
+            ThisPic.height = reHeight;
+        }
+    }
+
+
+    function imgShow(_this){
+        var src = _this.attr("src");
+        $("#bigimg").attr("src", src);
+        $("<img/>").attr("src", src).load(function(){
+            var windowW = $(window).width();
+            var windowH = $(window).height();
+            var realWidth = this.width;
+            var realHeight = this.height;
+            var imgWidth, imgHeight;
+            var scale = 0.8;
+
+            if(realHeight>windowH*scale) {
+                imgHeight = windowH*scale;
+                imgWidth = imgHeight/realHeight*realWidth;
+                if(imgWidth>windowW*scale) {
+                    imgWidth = windowW*scale;
+                }
+            } else if(realWidth>windowW*scale) {
+                imgWidth = windowW*scale;
+                imgHeight = imgWidth/realWidth*realHeight;
+            } else {
+                imgWidth = realWidth;
+                imgHeight = realHeight;
+            }
+            $("#bigimg").css("width",imgWidth);
+
+            var w = (windowW-imgWidth)/2;
+            var h = (windowH-imgHeight)/2;
+            $("#innerdiv").css({"top":h, "left":w});
+            $("#outerdiv").fadeIn("fast");
+        });
+        $("#outerdiv").click(function(){
+            $('#outerdiv').fadeOut('fast');
+        });
+    }
+
+</script>
+</body>
+</html>

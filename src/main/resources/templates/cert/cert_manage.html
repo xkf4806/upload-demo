@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <title>国付宝PGWeb-证件管理</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <meta name="Author" content=""/>
+    <meta name="Keywords" content=""/>
+    <meta name="Description" content=""/>
+    <link rel="stylesheet" th:href="@{stylesheets/reset.css}" media="all"/>
+    <link rel="stylesheet" th:href="@{stylesheets/layout.css}" media="all"/>
+    <link rel="stylesheet" th:href="@{stylesheets/style.css}" media="all"/>
+    <link rel="stylesheet" th:href="@{stylesheets/ui-lightness/jquery-ui-1.10.0.custom.min.css}" media="all"/>
+    <link rel="stylesheet" th:href="@{stylesheets/register/style.css}" media="all"/>
+    <script type="text/javascript" th:src="@{javascripts/jquery-1.12.4.js}"></script>
+    <script type="text/javascript" th:src="@{javascripts/jquery-ui-1.10.0.custom.min.js}"></script>
+
+</head>
+<body>
+<div class="pgweb-topbar">
+    <div class="wrap fix">
+        <div class="floatLeft">
+            <a href="#">国付宝首页</a>|<a href="#">手机版国付宝</a>|<a href="#" class="pgweb-icon-weibo">国付宝微博</a>
+        </div>
+        <div class="floatRight">
+            <span class="pgweb-icon-userinfo">您好!test@yeah.net(管理员)</span>|<a href="#">帮助中心</a>|<a href="#"
+                                                                                                   class="pgweb-icon-out">退出</a>
+        </div>
+    </div>
+</div>
+<div class="pgweb-header">
+    <div class="wrap fix">
+        <div class="logo floatLeft">
+			<span>
+				<img src="../images/pgweb_logo.gif" alt="国付宝"/>
+			</span>
+        </div>
+    </div>
+</div>
+<div class="pgweb-main-menu">
+    <div class="wrap fix">
+        <ul>
+            <li><a href="#">帐户</a></li>
+            <li><a href="#">交易查询</a></li>
+            <li><a href="#">转账付款</a></li>
+            <li><a href="#">商户收单</a></li>
+            <li><a href="#">特色服务</a></li>
+            <li><a href="#">安全管理</a></li>
+            <li><a href="#">基本信息</a></li>
+        </ul>
+    </div>
+</div>
+<div class="pgweb-container">
+    <div class="wrap fix">
+        <div class="pgweb-sub-menu floatLeft">
+            <ul>
+                <li class="nav-item">
+                    <a href="#" class="pgweb-icon-account">付款首页</a>
+                    <a href="#" class="nav-sub-btn"></a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="pgweb-icon-recharge">关联帐户转帐</a>
+                    <a href="#" class="nav-sub-btn"></a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="pgweb-icon-withdraw">付款到银行</a>
+                    <a href="#" class="nav-sub-btn"></a>
+                    <div class="nav-sub">
+                        <ul>
+                            <li><a href="#">单笔付款到银行</a></li>
+                            <li><a href="#">批量付款到银行</a></li>
+                        </ul>
+                    </div>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="pgweb-icon-details">付款到国付宝</a>
+                    <a href="#" class="nav-sub-btn"></a>
+                    <div class="nav-sub">
+                        <ul>
+                            <li><a href="#">单笔付款到国付宝</a></li>
+                            <li><a href="#">批量付款到国付宝</a></li>
+                            <li><a href="#">付款审核</a></li>
+                            <li><a href="#">付款查询</a></li>
+                            <li><a href="#">收款人管理</a></li>
+                        </ul>
+                    </div>
+                </li>
+            </ul>
+        </div>
+        <div class="pgweb-content floatRight">
+            <div class="fix marginBottom20">
+                <h6 class="floatLeft">证件管理</h6>
+            </div>
+
+            <div class="regsitercss-box tabsContain newRegbox">
+                <div class="tabscon" style="display: block">
+                    <form enctype="multipart/form-data">
+
+                        <ul>
+                            <li class="fix">
+                                <div class="floatLeft"><span class="zoom width160 textRight"></span>
+                                    <label><input class="inp-radio" type="radio" name="certType">三证合一企业</label>
+                                    <label class="marginLeft10"><input class="inp-radio" type="radio" name="certType">五证企业</label>
+                                </div>
+                            </li>
+                            <li class="fix">
+                                <div class="floatLeft"><span class="zoom width160 textRight">营业执照：</span>
+                                    <span class="pic-wrap">
+                                        <input type="file" name="aFile" multiple>
+                                        <!--<img src="../images/pic1.jpg" alt="">-->
+                                        </span><a href="#" class="blue font12">删除</a>
+                                    <em class="upload-tips">上传须知</em>
+                                </div>
+                                <div class="floatLeft"><span class="onShow" id="corpnameTip" style="margin: 0px; padding: 0px; background: transparent none repeat scroll 0% 0%;"><div></div></span></div>
+                            </li>
+                            <li class="fix">
+                                <div class="floatLeft"><span class="zoom width160 textRight">营业执照有效期：</span><label><input
+                                        style="width:170px;height: 20px;" id="legalPersonCertTerm"
+                                        name="legalPersonCertTerm"
+                                        onclick="WdatePicker({onpicked:function tri (){$('#legalPersonCertTerm').trigger('blur');}});"
+                                        readonly="readonly" type="text">
+                                    <input id="legalPersonCertTermCheck" name="legalPersonCertTermCheck"
+                                           onclick="fnCertLongTern()" class="inp-check" type="checkbox">长期</label>
+                                </div>
+                                <div class="floatLeft"><span class="onShow" id="corpCityCodeTip"
+                                                             style="margin: 0px; padding: 0px; background: transparent none repeat scroll 0% 0%;"><div
+                                        class="onShow"></div></span></div>
+                            </li>
+                            <li class="fix">
+                                <div class="floatLeft"><span class="zoom width160 textRight">银行开户许可证：</span><span class="pic-wrap"><img src="../images/pic1.jpg" alt=""></span><a
+                                        href="#" class="blue font12">删除</a></div>
+
+                            </li>
+                            <li class="fix">
+                                <div class="floatLeft"><span class="zoom width160 textRight">法人身份证正面：</span><span class="pic-wrap"><img src="../images/pic1.jpg" alt=""></span><a
+                                        href="#" class="blue font12">删除</a></div>
+
+                            </li>
+                            <li class="fix">
+                                <div class="floatLeft"><span class="zoom width160 textRight">法人身份证反面：</span><span class="pic-wrap"><img src="../images/pic1.jpg" alt=""></span><a
+                                        href="#" class="blue font12">删除</a></div>
+                            </li>
+                            <li class="fix">
+                                <div class="floatLeft"><span class="zoom width160 textRight">法人证件有效期：</span><label
+                                        ><input
+                                        readonly="readonly" type="text">
+                                    <input class="inp-check" type="checkbox">长期</label>
+                                </div>
+                            </li>
+                            <li>
+                                <span class="zoom width160 textRight">&nbsp;</span><button type="submit" class="btn-1">提交</button></li>
+                        </ul>
+                    </form>
+                </div>
+            </div>
+
+
+        </div>
+    </div>
+</div>
+<div class="pgweb-footer">
+    <div class="ft-box-shadow">
+        <div class="wrap fix">
+        </div>
+    </div>
+    <div class="wrap fix">
+        <p class="paddingBottom20 textCenter">
+            <a href="#">关于我们</a>|<a href="#">新手上路</a>|<a href="#">新闻中心</a>|<a href="#">合作伙伴</a>|<a href="#">诚聘英才</a>|<a
+                href="#">联系我们</a>
+        </p>
+        <p class="textCenter">
+            Copyright2003-2012,版权所有：国付宝信息科技有限公司，建设运营：国付宝信息科技有限公司<br/>
+            经营许可证编号：京ICP证100737号，增值电信业务经营许可证编号：B2-20060031，网站备案号：京ICP备12041831号-1 京公网安备110105019150<br/>
+        </p>
+    </div>
+</div>
+<script>
+    jQuery("#list4").jqGrid({
+        url: 'test.json',
+        datatype: "json",
+        colNames: ['Inv No', 'Date', 'Client', 'Amount', 'Tax', 'Total', 'Notes'],
+        colModel: [{name: 'id', index: 'id', width: 60, sorttype: "int"}, {
+            name: 'invdate',
+            index: 'invdate',
+            width: 90,
+            sorttype: "date"
+        }, {name: 'name', index: 'name', width: 100}, {
+            name: 'amount',
+            index: 'amount',
+            width: 80,
+            align: "right",
+            sorttype: "float"
+        }, {name: 'tax', index: 'tax', width: 80, align: "right", sorttype: "float"}, {
+            name: 'total',
+            index: 'total',
+            width: 80,
+            align: "right",
+            sorttype: "float"
+        }, {name: 'note', index: 'note', width: 150, sortable: false}],
+        multiselect: true,
+        caption: "交易查询",
+        rowNum: 4,
+        rowList: [4, 20, 30],
+        pager: '#pager11',
+        sortname: 'id',
+        viewrecords: true,
+        sortorder: "desc"
+    });
+</script>
+</body>
+
+</html>

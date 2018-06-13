@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        .container {
+            margin: 0 auto;
+        }
+    </style>
+</head>
+<body>
+<form action="">
+    <div class="container">
+    <label>请选择一个图像文件：</label>
+    <input type="file" name="file" multiple>
+    </div>
+</form>
+</body>
+<script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script>
+<script>
+    $(function () {
+        var input = document.getElementById("file_input");
+        var result, div;
+
+        if (typeof FileReader === 'undefined') {
+            result.innerHTML = "抱歉，你的浏览器不支持 FileReader";
+            input.setAttribute('disabled', 'disabled');
+        } else {
+            input.addEventListener('change', readFile, false);
+        }
+
+        function readFile(){
+            var fd = new FormData();
+            for(var i=0;i<this.files.length;i++){
+                if (!input['value'].match(/.jpg|.gif|.png|.bmp/i)) {　　//判断上传文件格式
+                    return alert("上传的图片格式不正确，请重新选择");
+                }
+                var reader = new FileReader();
+                reader.readAsDataURL(this.files[i]);
+                fd.append(i,this.files[i]);　　　　　　　　 }
+            $.ajax({
+                url : '',
+                type : 'post',
+                data : fd,
+                success : function(data){
+                    console.log(data)
+                }
+            })
+        }
+    })
+</script>
+</html>

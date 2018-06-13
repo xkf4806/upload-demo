@@ -1,0 +1,9 @@
+spring:
+  thymeleaf:
+    mode: HTML
+    cache: false
+  application:
+    name: upload
+  devtools:
+    restart:
+      enabled: true
