@@ -73,6 +73,8 @@
     </div>
 </div>
 <script src="http://libs.baidu.com/jquery/2.0.0/jquery.min.js"></script>
+<script th:src="@{javascripts/imgEnlarge.js}"></script>
+<script th:src="@{javascripts/exif.min.js}"></script>
 <script type="text/javascript">
     var contextPath;
     window.onload = function(){
@@ -97,15 +99,8 @@
 //                input.setAttribute('disabled','disabled');
             }else{
                 $(this).on('change', readFile);
-//                input.addEventListener('change',readFile,false);
             }
         })
-//        if(typeof FileReader==='undefined'){
-//            alert("抱歉，你的浏览器不支持 FileReader");
-//            input.setAttribute('disabled','disabled');
-//        }else{
-//            input.addEventListener('change',readFile,false);
-//        }
 
         function readFile(event){
             fd = new FormData();
@@ -146,9 +141,7 @@
                     }
 
                     div.onclick = function(){
-                        imgShow($(this).find('img'))
-//                            this.remove();                  // 在页面中删除该图片元素
-//                            delete dataArr[this.index];  // 删除dataArr对应的数据
+                        imgShow("#outerdiv", "#innerdiv", "#bigimg", $(this).find('img').attr('src'))
                     }
                     index++;
                 }
@@ -162,15 +155,12 @@
                     submitArr.push(dataArr[i]);
                 }
             }
-            // console.log('提交的数据：'+JSON.stringify(submitArr))
             $.ajax({
                 url : contextPath + 'img/submit',
                 type : 'post',
                 data : JSON.stringify(submitArr),
                 dataType: 'json',
                 contentType: "application/json; charset=utf-8",
-                //processData: false,   用FormData传fd时需有这两项
-                //contentType: false,
                 success : function(data){
                     $('#toShow').attr('src', data.path)
                     console.log(data.path)
@@ -185,41 +175,16 @@
 
         $oSelect.on('click', function () {
             var $sib = $(this).next('input[type=file]');
-//            $oInput.val('')
             $sib.val('');
-//            oInput.value = "";   // 先将oInput值清空，否则选择图片与上次相同时change事件不会触发
-            //清空已选图片
-//            $('.float').remove();
-//            dataArr = [];
             index = 0;
             $sib.click();
-//            $oInput.click();
         })
-//        oSelect.onclick=function(){
-//            $oInput.val('')
-////            oInput.value = "";   // 先将oInput值清空，否则选择图片与上次相同时change事件不会触发
-//            //清空已选图片
-//            $('.float').remove();
-//            dataArr = [];
-//            index = 0;
-//            $oInput.click();
-//        }
-//        oAdd.onclick=function(){
-//            oInput.value = "";   // 先将oInput值清空，否则选择图片与上次相同时change事件不会触发
-//            oInput.click();
-//        }
         $oSubmit.on('click', function () {
             if(!dataArr.length){
                 return alert('请先选择文件');
             }
             send();
         })
-//        oSubmit.onclick=function(){
-//            if(!dataArr.length){
-//                return alert('请先选择文件');
-//            }
-//            send();
-//        }
     }
     /*
      用ajax发送fd参数时要告诉jQuery不要去处理发送的数据，
@@ -246,43 +211,7 @@
         }
     }
 
-
-    function imgShow(_this){
-        var src = _this.attr("src");
-        $("#bigimg").attr("src", src);
-        $("<img/>").attr("src", src).load(function(){
-            var windowW = $(window).width();
-            var windowH = $(window).height();
-            var realWidth = this.width;
-            var realHeight = this.height;
-            var imgWidth, imgHeight;
-            var scale = 0.8;
-
-            if(realHeight>windowH*scale) {
-                imgHeight = windowH*scale;
-                imgWidth = imgHeight/realHeight*realWidth;
-                if(imgWidth>windowW*scale) {
-                    imgWidth = windowW*scale;
-                }
-            } else if(realWidth>windowW*scale) {
-                imgWidth = windowW*scale;
-                imgHeight = imgWidth/realWidth*realHeight;
-            } else {
-                imgWidth = realWidth;
-                imgHeight = realHeight;
-            }
-            $("#bigimg").css("width",imgWidth);
-
-            var w = (windowW-imgWidth)/2;
-            var h = (windowH-imgHeight)/2;
-            $("#innerdiv").css({"top":h, "left":w});
-            $("#outerdiv").fadeIn("fast");
-        });
-        $("#outerdiv").click(function(){
-            $('#outerdiv').fadeOut('fast');
-        });
-    }
-
 </script>
+
 </body>
 </html>
