@@ -1,9 +1,10 @@
 pipeline {
   agent any
   stages {
-    stage('') {
+    stage('error') {
       steps {
         echo 'hello world'
+        build(job: 'build', quietPeriod: 1)
       }
     }
   }
