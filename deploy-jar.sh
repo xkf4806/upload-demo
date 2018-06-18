@@ -13,10 +13,9 @@ cd $PROJ_PATH/upload-demo
 mvn clean package -DskipTests
 
 # 启动应用
-cd $PROJ_PATH
 mkdir logs
 
-cd upload-demo/target
+cd target
 
 # 后台启动应用，并将日志输出到指定文件
-nohup java -jar upload-demo-0.0.1-SNAPSHOT.jar > $PROJ_PATH/logs/upload-demo.log &
+nohup java -jar upload-demo-0.0.1-SNAPSHOT.jar > $PROJ_PATH/upload-demo/logs/upload-demo.log &
