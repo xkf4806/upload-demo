@@ -29,6 +29,7 @@ if ["$pid" = ""]
 then
     echo "未检测到正在执行的upload-demo应用"
 else
+    echo "杀死进程号：$pid，并重新后台启动应用"
     kill -9 $pid
 fi
 # 重新后台启动应用，并将日志输出到指定文件
