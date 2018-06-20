@@ -2,10 +2,15 @@ spring:
   thymeleaf:
     mode: HTML
     cache: false
+    enabled: false
   application:
     name: upload
   devtools:
     restart:
       enabled: true
+  mvc:
+    view:
+      prefix: /WEB-INF/
+      suffix: .jsp
 server:
   port: 8090
